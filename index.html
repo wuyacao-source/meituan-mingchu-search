@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>明厨亮灶 · 外卖商家查询</title>
+  <style>
+    :root {
+      --primary: #FFD100;
+      --mingchu-green: #00B578;
+      --mingchu-bg: #E8F8F0;
+      --bg: #F5F5F5;
+      --card-bg: #FFFFFF;
+      --text: #222222;
+      --text-secondary: #666666;
+      --text-muted: #999999;
+      --shadow: 0 2px 12px rgba(0,0,0,0.06);
+      --radius: 12px;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* Header */
+    .header {
+      background: linear-gradient(135deg, #00B578 0%, #009A63 100%);
+      padding: 28px 16px 24px;
+      text-align: center;
+      color: #fff;
+    }
+    .header h1 { font-size: 22px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .header .sub { font-size: 13px; opacity: 0.85; margin-top: 6px; }
+
+    /* City Picker */
+    .city-bar {
+      max-width: 700px;
+      margin: -14px auto 0;
+      padding: 0 16px;
+      position: relative;
+      z-index: 10;
+    }
+    .city-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 10px 14px;
+      box-shadow: var(--shadow);
+    }
+    .city-tab {
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      border: 1px solid #E0E0E0;
+      background: #fff;
+      color: var(--text-secondary);
+      transition: all 0.15s;
+      user-select: none;
+    }
+    .city-tab:hover { border-color: var(--mingchu-green); color: var(--mingchu-green); }
+    .city-tab.active { background: var(--mingchu-green); color: #fff; border-color: var(--mingchu-green); }
+
+    /* Main */
+    .main { max-width: 700px; margin: 20px auto; padding: 0 16px; }
+
+    /* Stat */
+    .stat-banner {
+      background: var(--mingchu-bg);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .stat-num {
+      font-size: 36px;
+      font-weight: 800;
+      color: var(--mingchu-green);
+      line-height: 1;
+    }
+    .stat-info { font-size: 14px; color: #333; line-height: 1.6; }
+    .stat-info strong { color: var(--mingchu-green); }
+
+    /* Cards */
+    .card-list { display: flex; flex-direction: column; gap: 10px; }
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 16px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+      transition: transform 0.12s, box-shadow 0.12s;
+    }
+    .card:hover { transform: translateY(-1px); box-shadow: var(--shadow); }
+    .card-top { display: flex; align-items: center; gap: 12px; }
+    .card-avatar {
+      width: 50px; height: 50px; border-radius: 10px;
+      background: linear-gradient(135deg, #00B578 0%, #009A63 100%);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px; flex-shrink: 0;
+    }
+    .card-info { flex: 1; min-width: 0; }
+    .card-name { font-size: 15px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .card-meta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; font-size: 12px; color: var(--text-secondary); }
+    .meta-item { display: flex; align-items: center; gap: 2px; }
+    .card-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
+    .card-tag {
+      background: var(--mingchu-bg); color: var(--mingchu-green);
+      padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;
+    }
+    .card-tag.other { background: #F0F0F0; color: #888; }
+    .mingchu-badge {
+      display: inline-flex; align-items: center; gap: 3px;
+      background: var(--mingchu-green); color: #fff;
+      padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 700;
+      margin-left: 6px; white-space: nowrap;
+    }
+
+    /* Footer */
+    .footer { text-align: center; padding: 32px 16px; color: var(--text-muted); font-size: 12px; }
+    .footer a { color: var(--mingchu-green); text-decoration: none; }
+
+    /* Empty */
+    .empty { text-align: center; padding: 60px 20px; color: var(--text-muted); }
+    .empty-icon { font-size: 48px; margin-bottom: 12px; }
+
+    @media (max-width: 500px) {
+      .header h1 { font-size: 18px; }
+      .city-tabs { padding: 8px 10px; gap: 6px; }
+      .city-tab { padding: 6px 12px; font-size: 12px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <h1>👨‍🍳 明厨亮灶外卖商家</h1>
+  <p class="sub">只展示有「明厨亮灶」标签的放心商家 · 厨房直播看得见</p>
+</div>
+
+<div class="city-bar">
+  <div class="city-tabs" id="cityTabs"></div>
+</div>
+
+<div class="main" id="mainContent"></div>
+
+<div class="footer">
+  <p>数据来源：美团外卖 · 仅展示具有「明厨亮灶」标签的商家</p>
+  <p>💡 明厨亮灶 = 厨房实时视频公开，食品安全有保障</p>
+</div>
+
+<script>
+// ============================================================
+// 明厨亮灶商家数据
+//
+// 数据格式：
+//   city: 城市名
+//   shops: [{ name, rating, monthlySales, deliveryTime, deliveryFee, tags, note? }]
+//
+// ✏️ 按此格式添加更多城市和商家即可
+// ============================================================
+
+const DATA = {
+  "天津": [
+    { name: "明厨亮灶·津味包子铺", rating: 4.6, monthlySales: 5800, deliveryTime: 22, deliveryFee: 1.5, tags: ["明厨亮灶", "包子", "人气高"] },
+    { name: "透明厨房·煎饼果子", rating: 4.5, monthlySales: 7200, deliveryTime: 18, deliveryFee: 0.5, tags: ["明厨亮灶", "小吃", "配送快"] },
+    { name: "阳光明厨·老爆三", rating: 4.7, monthlySales: 4100, deliveryTime: 28, deliveryFee: 2.0, tags: ["明厨亮灶", "津菜", "评分高"] },
+    { name: "看得见厨房·耳朵眼炸糕", rating: 4.4, monthlySales: 5500, deliveryTime: 20, deliveryFee: 1.0, tags: ["明厨亮灶", "小吃", "回头客多"] },
+    { name: "安心厨房·锅巴菜", rating: 4.3, monthlySales: 3600, deliveryTime: 15, deliveryFee: 0, tags: ["明厨亮灶", "津菜", "配送快"] },
+    { name: "亮灶·天津捞面馆", rating: 4.5, monthlySales: 4700, deliveryTime: 22, deliveryFee: 1.5, tags: ["明厨亮灶", "面馆", "品质优选"] },
+    { name: "明厨·八珍豆腐坊", rating: 4.6, monthlySales: 3300, deliveryTime: 26, deliveryFee: 2.0, tags: ["明厨亮灶", "津菜", "评分高"] },
+    { name: "透明灶台·贴饽饽熬小鱼", rating: 4.4, monthlySales: 2900, deliveryTime: 24, deliveryFee: 1.0, tags: ["明厨亮灶", "津菜", "品质优选"] },
+    { name: "明厨亮灶·天津烧烤", rating: 4.7, monthlySales: 6400, deliveryTime: 30, deliveryFee: 2.5, tags: ["明厨亮灶", "烧烤", "人气高"] },
+    { name: "阳光厨房·熟梨糕", rating: 4.8, monthlySales: 3800, deliveryTime: 20, deliveryFee: 0.5, tags: ["明厨亮灶", "小吃", "评分高"] },
+  ],
+};
+
+// ============================================================
+// 渲染逻辑
+// ============================================================
+
+const cityTabs = document.getElementById('cityTabs');
+const main = document.getElementById('mainContent');
+const cities = Object.keys(DATA);
+
+// 尝试从 URL hash 读取城市
+function getHashCity() {
+  const hash = window.location.hash.replace('#', '');
+  try { return decodeURIComponent(hash); } catch { return hash; }
+}
+
+let currentCity = getHashCity();
+if (!cities.includes(currentCity)) currentCity = cities[0];
+
+// 渲染城市标签
+cityTabs.innerHTML = cities.map(c =>
+  `<span class="city-tab ${c === currentCity ? 'active' : ''}" onclick="selectCity('${c}')">${c}</span>`
+).join('');
+
+// 渲染
+renderCity(currentCity);
+
+function selectCity(city) {
+  currentCity = city;
+  window.location.hash = encodeURIComponent(city);
+  document.querySelectorAll('.city-tab').forEach(tab => {
+    tab.classList.toggle('active', tab.textContent === city);
+  });
+  renderCity(city);
+}
+
+function renderCity(city) {
+  const shops = DATA[city] || [];
+
+  if (shops.length === 0) {
+    main.innerHTML = `<div class="empty"><div class="empty-icon">📭</div><p>该城市暂无明厨亮灶商家数据</p></div>`;
+    return;
+  }
+
+  const totalSales = shops.reduce((s, r) => s + r.monthlySales, 0);
+  const avgRating = (shops.reduce((s, r) => s + r.rating, 0) / shops.length).toFixed(1);
+
+  main.innerHTML = `
+    <div class="stat-banner">
+      <div class="stat-num">${shops.length}</div>
+      <div class="stat-info">
+        <strong>${city}</strong> 共 <strong>${shops.length}</strong> 家明厨亮灶商家<br>
+        平均评分 ⭐${avgRating} · 月售合计 📦${totalSales >= 1000 ? (totalSales/1000).toFixed(0)+'k' : totalSales}
+      </div>
+    </div>
+    <div class="card-list">
+      ${shops.map(r => renderCard(r)).join('')}
+    </div>
+  `;
+}
+
+function renderCard(r) {
+  const stars = r.rating >= 4.8 ? '⭐⭐⭐⭐⭐' :
+                r.rating >= 4.5 ? '⭐⭐⭐⭐½' :
+                r.rating >= 4.0 ? '⭐⭐⭐⭐' :
+                r.rating >= 3.5 ? '⭐⭐⭐½' : '⭐⭐⭐';
+
+  const metaItems = [];
+  metaItems.push(`<span class="meta-item">${stars} ${r.rating.toFixed(1)}</span>`);
+  metaItems.push(`<span class="meta-item">📦 月售${r.monthlySales >= 1000 ? (r.monthlySales/1000).toFixed(0)+'k' : r.monthlySales}</span>`);
+  metaItems.push(`<span class="meta-item">🛵 ${r.deliveryTime}分钟</span>`);
+  if (r.deliveryFee > 0) metaItems.push(`<span class="meta-item">💰 配送¥${r.deliveryFee}</span>`);
+  if (r.deliveryFee === 0) metaItems.push(`<span class="meta-item">🎉 免配送费</span>`);
+
+  const tagsHtml = r.tags.map(t =>
+    `<span class="card-tag ${t === '明厨亮灶' ? '' : 'other'}">${t}</span>`
+  ).join('');
+
+  return `
+    <div class="card">
+      <div class="card-top">
+        <div class="card-avatar">👨‍🍳</div>
+        <div class="card-info">
+          <div class="card-name">
+            ${esc(r.name)}
+            <span class="mingchu-badge">明厨亮灶</span>
+          </div>
+          <div class="card-meta">${metaItems.join('')}</div>
+        </div>
+      </div>
+      <div class="card-tags">${tagsHtml}</div>
+    </div>
+  `;
+}
+
+function esc(s) {
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+</script>
+
+</body>
+</html>
