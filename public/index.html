@@ -168,63 +168,17 @@
 // ============================================================
 
 const DATA = {
-  "北京": [
-    { name: "透明厨房·川味家常菜", rating: 4.7, monthlySales: 5200, deliveryTime: 28, deliveryFee: 2.5, tags: ["明厨亮灶", "川菜", "品牌连锁", "评分高"] },
-    { name: "明厨亮灶·老北京炸酱面", rating: 4.5, monthlySales: 3800, deliveryTime: 22, deliveryFee: 1.5, tags: ["明厨亮灶", "面馆", "回头客多"] },
-    { name: "阳光厨房·湘味小炒", rating: 4.8, monthlySales: 6100, deliveryTime: 30, deliveryFee: 3.0, tags: ["明厨亮灶", "湘菜", "人气高"] },
-    { name: "看得见厨房·粤式茶餐厅", rating: 4.6, monthlySales: 4500, deliveryTime: 25, deliveryFee: 2.0, tags: ["明厨亮灶", "粤菜", "茶餐厅"] },
-    { name: "安心厨房·东北饺子馆", rating: 4.4, monthlySales: 3200, deliveryTime: 20, deliveryFee: 0, tags: ["明厨亮灶", "饺子", "配送快"] },
-    { name: "亮灶·黄焖鸡米饭", rating: 4.5, monthlySales: 7100, deliveryTime: 24, deliveryFee: 1.0, tags: ["明厨亮灶", "快餐", "人气高"] },
-    { name: "透明灶台·兰州拉面", rating: 4.3, monthlySales: 4900, deliveryTime: 18, deliveryFee: 0.5, tags: ["明厨亮灶", "面馆", "配送快"] },
-  ],
-  "上海": [
-    { name: "明厨·本帮菜馆", rating: 4.8, monthlySales: 5800, deliveryTime: 30, deliveryFee: 3.0, tags: ["明厨亮灶", "本帮菜", "品牌连锁"] },
-    { name: "透明厨房·小笼包专门店", rating: 4.6, monthlySales: 8300, deliveryTime: 22, deliveryFee: 1.5, tags: ["明厨亮灶", "小吃", "人气高"] },
-    { name: "阳光明厨·日式拉面", rating: 4.7, monthlySales: 4200, deliveryTime: 26, deliveryFee: 2.5, tags: ["明厨亮灶", "日料", "评分高"] },
-    { name: "明厨亮灶·生煎馆", rating: 4.4, monthlySales: 5500, deliveryTime: 20, deliveryFee: 1.0, tags: ["明厨亮灶", "小吃", "配送快"] },
-    { name: "安心厨房·川香火锅冒菜", rating: 4.5, monthlySales: 3600, deliveryTime: 32, deliveryFee: 2.0, tags: ["明厨亮灶", "川菜", "回头客多"] },
-    { name: "看得见·粤式烧腊", rating: 4.6, monthlySales: 4700, deliveryTime: 28, deliveryFee: 2.5, tags: ["明厨亮灶", "粤菜", "品质优选"] },
-  ],
-  "广州": [
-    { name: "明厨·潮汕砂锅粥", rating: 4.7, monthlySales: 6200, deliveryTime: 30, deliveryFee: 2.0, tags: ["明厨亮灶", "粤菜", "人气高"] },
-    { name: "透明厨房·广式烧鹅", rating: 4.8, monthlySales: 5100, deliveryTime: 28, deliveryFee: 3.0, tags: ["明厨亮灶", "粤菜", "评分高"] },
-    { name: "阳光厨房·煲仔饭", rating: 4.5, monthlySales: 4400, deliveryTime: 25, deliveryFee: 1.5, tags: ["明厨亮灶", "粤菜", "回头客多"] },
-    { name: "明厨亮灶·云吞面世家", rating: 4.4, monthlySales: 3800, deliveryTime: 18, deliveryFee: 0.5, tags: ["明厨亮灶", "面馆", "配送快"] },
-    { name: "安心厨房·顺德菜馆", rating: 4.6, monthlySales: 3300, deliveryTime: 32, deliveryFee: 2.5, tags: ["明厨亮灶", "粤菜", "品质优选"] },
-  ],
-  "深圳": [
-    { name: "明厨亮灶·潮汕牛肉火锅", rating: 4.8, monthlySales: 6800, deliveryTime: 35, deliveryFee: 4.0, tags: ["明厨亮灶", "火锅", "人气高"] },
-    { name: "透明厨房·湘味小厨", rating: 4.5, monthlySales: 5200, deliveryTime: 26, deliveryFee: 2.0, tags: ["明厨亮灶", "湘菜", "品牌连锁"] },
-    { name: "阳光明厨·椰子鸡", rating: 4.7, monthlySales: 4600, deliveryTime: 30, deliveryFee: 3.0, tags: ["明厨亮灶", "粤菜", "评分高"] },
-    { name: "看得见厨房·客家菜", rating: 4.4, monthlySales: 3100, deliveryTime: 24, deliveryFee: 1.5, tags: ["明厨亮灶", "客家菜", "回头客多"] },
-    { name: "亮灶·茶餐厅", rating: 4.3, monthlySales: 3900, deliveryTime: 20, deliveryFee: 1.0, tags: ["明厨亮灶", "茶餐厅", "配送快"] },
-  ],
-  "杭州": [
-    { name: "明厨·杭帮菜馆", rating: 4.7, monthlySales: 5500, deliveryTime: 28, deliveryFee: 2.5, tags: ["明厨亮灶", "杭帮菜", "品质优选"] },
-    { name: "透明厨房·片儿川面馆", rating: 4.5, monthlySales: 4100, deliveryTime: 20, deliveryFee: 1.0, tags: ["明厨亮灶", "面馆", "配送快"] },
-    { name: "阳光明厨·龙井虾仁专门店", rating: 4.6, monthlySales: 3400, deliveryTime: 30, deliveryFee: 3.0, tags: ["明厨亮灶", "杭帮菜", "评分高"] },
-    { name: "明厨亮灶·东坡肉馆", rating: 4.8, monthlySales: 4800, deliveryTime: 26, deliveryFee: 2.0, tags: ["明厨亮灶", "杭帮菜", "人气高"] },
-  ],
-  "成都": [
-    { name: "明厨亮灶·川味火锅", rating: 4.8, monthlySales: 8200, deliveryTime: 35, deliveryFee: 4.0, tags: ["明厨亮灶", "火锅", "人气高"] },
-    { name: "透明厨房·串串香", rating: 4.6, monthlySales: 6700, deliveryTime: 28, deliveryFee: 2.5, tags: ["明厨亮灶", "川菜", "回头客多"] },
-    { name: "阳光厨房·担担面馆", rating: 4.5, monthlySales: 5100, deliveryTime: 20, deliveryFee: 1.0, tags: ["明厨亮灶", "面馆", "配送快"] },
-    { name: "看得见·麻辣香锅", rating: 4.4, monthlySales: 4300, deliveryTime: 25, deliveryFee: 2.0, tags: ["明厨亮灶", "川菜", "品质优选"] },
-    { name: "安心厨房·川味小炒", rating: 4.6, monthlySales: 3900, deliveryTime: 22, deliveryFee: 1.5, tags: ["明厨亮灶", "川菜", "评分高"] },
-    { name: "亮灶·酸菜鱼专门店", rating: 4.7, monthlySales: 5900, deliveryTime: 30, deliveryFee: 3.0, tags: ["明厨亮灶", "川菜", "人气高"] },
-  ],
-  "武汉": [
-    { name: "明厨亮灶·热干面馆", rating: 4.5, monthlySales: 7200, deliveryTime: 18, deliveryFee: 0.5, tags: ["明厨亮灶", "面馆", "配送快"] },
-    { name: "透明厨房·小龙虾", rating: 4.7, monthlySales: 5600, deliveryTime: 30, deliveryFee: 3.0, tags: ["明厨亮灶", "龙虾", "人气高"] },
-    { name: "阳光明厨·武昌鱼馆", rating: 4.4, monthlySales: 3500, deliveryTime: 25, deliveryFee: 2.0, tags: ["明厨亮灶", "鄂菜", "品质优选"] },
-    { name: "安心厨房·鸭脖卤味", rating: 4.3, monthlySales: 4800, deliveryTime: 20, deliveryFee: 1.0, tags: ["明厨亮灶", "卤味", "回头客多"] },
-  ],
-  "重庆": [
-    { name: "明厨亮灶·重庆火锅", rating: 4.8, monthlySales: 9100, deliveryTime: 38, deliveryFee: 5.0, tags: ["明厨亮灶", "火锅", "人气高"] },
-    { name: "透明厨房·小面馆", rating: 4.6, monthlySales: 6300, deliveryTime: 18, deliveryFee: 0.5, tags: ["明厨亮灶", "面馆", "配送快"] },
-    { name: "阳光厨房·酸辣粉", rating: 4.5, monthlySales: 5500, deliveryTime: 20, deliveryFee: 1.0, tags: ["明厨亮灶", "小吃", "回头客多"] },
-    { name: "看得见·麻辣烤鱼", rating: 4.7, monthlySales: 4800, deliveryTime: 32, deliveryFee: 3.0, tags: ["明厨亮灶", "川菜", "评分高"] },
-    { name: "亮灶·毛血旺", rating: 4.4, monthlySales: 3700, deliveryTime: 26, deliveryFee: 2.0, tags: ["明厨亮灶", "川菜", "品质优选"] },
+  "天津": [
+    { name: "明厨亮灶·津味包子铺", rating: 4.6, monthlySales: 5800, deliveryTime: 22, deliveryFee: 1.5, tags: ["明厨亮灶", "包子", "人气高"] },
+    { name: "透明厨房·煎饼果子", rating: 4.5, monthlySales: 7200, deliveryTime: 18, deliveryFee: 0.5, tags: ["明厨亮灶", "小吃", "配送快"] },
+    { name: "阳光明厨·老爆三", rating: 4.7, monthlySales: 4100, deliveryTime: 28, deliveryFee: 2.0, tags: ["明厨亮灶", "津菜", "评分高"] },
+    { name: "看得见厨房·耳朵眼炸糕", rating: 4.4, monthlySales: 5500, deliveryTime: 20, deliveryFee: 1.0, tags: ["明厨亮灶", "小吃", "回头客多"] },
+    { name: "安心厨房·锅巴菜", rating: 4.3, monthlySales: 3600, deliveryTime: 15, deliveryFee: 0, tags: ["明厨亮灶", "津菜", "配送快"] },
+    { name: "亮灶·天津捞面馆", rating: 4.5, monthlySales: 4700, deliveryTime: 22, deliveryFee: 1.5, tags: ["明厨亮灶", "面馆", "品质优选"] },
+    { name: "明厨·八珍豆腐坊", rating: 4.6, monthlySales: 3300, deliveryTime: 26, deliveryFee: 2.0, tags: ["明厨亮灶", "津菜", "评分高"] },
+    { name: "透明灶台·贴饽饽熬小鱼", rating: 4.4, monthlySales: 2900, deliveryTime: 24, deliveryFee: 1.0, tags: ["明厨亮灶", "津菜", "品质优选"] },
+    { name: "明厨亮灶·天津烧烤", rating: 4.7, monthlySales: 6400, deliveryTime: 30, deliveryFee: 2.5, tags: ["明厨亮灶", "烧烤", "人气高"] },
+    { name: "阳光厨房·熟梨糕", rating: 4.8, monthlySales: 3800, deliveryTime: 20, deliveryFee: 0.5, tags: ["明厨亮灶", "小吃", "评分高"] },
   ],
 };
 
