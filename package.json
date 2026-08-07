@@ -1,0 +1,16 @@
+{
+  "name": "meituan-mingchu-search",
+  "version": "1.0.0",
+  "description": "Search Meituan Waimai restaurants by city and filter by 明厨亮灶 tag",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "puppeteer": "^22.0.0",
+    "puppeteer-extra": "^3.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2"
+  }
+}

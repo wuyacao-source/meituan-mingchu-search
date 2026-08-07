@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>美团外卖 · 明厨亮灶搜索</title>
+  <style>
+    :root {
+      --primary: #FFD100;
+      --primary-dark: #E5BC00;
+      --mingchu-green: #00B578;
+      --mingchu-green-bg: #E8F8F0;
+      --bg: #F5F5F5;
+      --card-bg: #FFFFFF;
+      --text: #222222;
+      --text-secondary: #666666;
+      --text-muted: #999999;
+      --border: #EEEEEE;
+      --shadow: 0 2px 12px rgba(0,0,0,0.08);
+      --radius: 12px;
+      --radius-sm: 8px;
+      --warning: #FF6B35;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* ---- Header ---- */
+    .header {
+      background: linear-gradient(135deg, var(--primary) 0%, #FFC800 100%);
+      padding: 20px 16px 24px;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header h1 {
+      font-size: 22px;
+      font-weight: 700;
+      color: #333;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .header .subtitle {
+      font-size: 13px;
+      color: #666;
+      margin-top: 4px;
+    }
+
+    .header .logo-icon {
+      font-size: 28px;
+    }
+
+    /* ---- Search Bar ---- */
+    .search-container {
+      max-width: 600px;
+      margin: -10px auto 0;
+      padding: 0 16px;
+      position: relative;
+      z-index: 101;
+    }
+
+    .search-box {
+      display: flex;
+      gap: 0;
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .search-box input {
+      flex: 1;
+      border: none;
+      padding: 14px 16px;
+      font-size: 16px;
+      outline: none;
+      color: var(--text);
+      background: transparent;
+    }
+
+    .search-box input::placeholder {
+      color: #BBBBBB;
+    }
+
+    .search-box button {
+      background: var(--mingchu-green);
+      color: #fff;
+      border: none;
+      padding: 14px 24px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+      white-space: nowrap;
+    }
+
+    .search-box button:hover {
+      background: #009A63;
+    }
+
+    .search-box button:disabled {
+      background: #CCC;
+      cursor: not-allowed;
+    }
+
+    .city-suggestions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+      justify-content: center;
+    }
+
+    .city-chip {
+      background: rgba(255,255,255,0.7);
+      border: 1px solid #DDD;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: #555;
+    }
+
+    .city-chip:hover {
+      background: #fff;
+      border-color: var(--primary-dark);
+      color: var(--text);
+    }
+
+    /* ---- Main Content ---- */
+    .main {
+      max-width: 800px;
+      margin: 24px auto;
+      padding: 0 16px;
+    }
+
+    /* ---- Stats Cards ---- */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .stat-card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 16px;
+      text-align: center;
+      box-shadow: var(--shadow);
+    }
+
+    .stat-card .stat-number {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .stat-card .stat-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .stat-card.mingchu .stat-number {
+      color: var(--mingchu-green);
+    }
+
+    .stat-card.warning .stat-number {
+      color: var(--warning);
+    }
+
+    /* ---- Tabs ---- */
+    .tabs {
+      display: flex;
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      margin-bottom: 16px;
+      overflow: hidden;
+    }
+
+    .tab {
+      flex: 1;
+      padding: 12px 16px;
+      text-align: center;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      transition: all 0.2s;
+    }
+
+    .tab:hover {
+      color: var(--text);
+    }
+
+    .tab.active {
+      color: var(--mingchu-green);
+      border-bottom-color: var(--mingchu-green);
+    }
+
+    .tab .tab-count {
+      display: inline-block;
+      background: #EEE;
+      border-radius: 10px;
+      padding: 1px 8px;
+      font-size: 11px;
+      margin-left: 4px;
+      font-weight: 500;
+    }
+
+    .tab.active .tab-count {
+      background: var(--mingchu-green-bg);
+      color: var(--mingchu-green);
+    }
+
+    /* ---- Restaurant List ---- */
+    .restaurant-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .restaurant-card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 16px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+
+    .restaurant-card:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow);
+    }
+
+    .restaurant-avatar {
+      width: 56px;
+      height: 56px;
+      border-radius: var(--radius-sm);
+      background: linear-gradient(135deg, #FFD100 0%, #FFA000 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+
+    .restaurant-avatar.mingchu-avatar {
+      background: linear-gradient(135deg, #00B578 0%, #009A63 100%);
+    }
+
+    .restaurant-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .restaurant-name {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .restaurant-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 4px;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .mingchu-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      background: var(--mingchu-green-bg);
+      color: var(--mingchu-green);
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .rating-stars {
+      color: #FFA000;
+    }
+
+    .no-mingchu-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      background: #FFF3E8;
+      color: #FF6B35;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .restaurant-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-top: 6px;
+    }
+
+    .restaurant-tag {
+      background: #F5F5F5;
+      color: var(--text-muted);
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-size: 10px;
+      white-space: nowrap;
+    }
+
+    /* ---- States ---- */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-muted);
+    }
+
+    .empty-state .empty-icon {
+      font-size: 64px;
+      margin-bottom: 16px;
+    }
+
+    .empty-state h3 {
+      font-size: 18px;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+
+    .empty-state p {
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .loading-spinner {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 20px;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid #EEE;
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .loading-text {
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+
+    .error-state {
+      background: #FFF0F0;
+      border: 1px solid #FFD0D0;
+      border-radius: var(--radius);
+      padding: 20px;
+      text-align: center;
+      color: #D32F2F;
+    }
+
+    .error-state .error-icon {
+      font-size: 40px;
+      margin-bottom: 8px;
+    }
+
+    /* ---- Info Banner ---- */
+    .info-banner {
+      background: #FFFDE7;
+      border: 1px solid #FFF0A0;
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      margin-bottom: 20px;
+      font-size: 12px;
+      color: #8D6E00;
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+      line-height: 1.5;
+    }
+
+    .info-banner .info-icon {
+      flex-shrink: 0;
+      font-size: 16px;
+    }
+
+    /* ---- Footer ---- */
+    .footer {
+      text-align: center;
+      padding: 32px 16px;
+      color: var(--text-muted);
+      font-size: 12px;
+    }
+
+    .search-meta {
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+
+    /* ---- Responsive ---- */
+    @media (max-width: 500px) {
+      .stats-row {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+      }
+      .stat-card {
+        padding: 12px 8px;
+      }
+      .stat-card .stat-number {
+        font-size: 22px;
+      }
+      .search-box button {
+        padding: 14px 16px;
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <div class="header">
+    <h1>
+      <span class="logo-icon">🍔</span>
+      美团外卖 · 明厨亮灶搜索
+    </h1>
+    <p class="subtitle">搜索城市外卖商家，按明厨亮灶标签分类</p>
+  </div>
+
+  <!-- Search -->
+  <div class="search-container">
+    <div class="search-box">
+      <input
+        type="text"
+        id="cityInput"
+        placeholder="输入城市名称，如：北京、上海、深圳..."
+        autocomplete="off"
+      >
+      <button id="searchBtn" onclick="doSearch()">🔍 搜索</button>
+    </div>
+    <div class="city-suggestions">
+      <span class="city-chip" onclick="quickSearch('北京')">北京</span>
+      <span class="city-chip" onclick="quickSearch('上海')">上海</span>
+      <span class="city-chip" onclick="quickSearch('广州')">广州</span>
+      <span class="city-chip" onclick="quickSearch('深圳')">深圳</span>
+      <span class="city-chip" onclick="quickSearch('杭州')">杭州</span>
+      <span class="city-chip" onclick="quickSearch('成都')">成都</span>
+      <span class="city-chip" onclick="quickSearch('武汉')">武汉</span>
+      <span class="city-chip" onclick="quickSearch('重庆')">重庆</span>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main" id="mainContent">
+    <!-- Empty initial state -->
+    <div class="empty-state" id="initialState">
+      <div class="empty-icon">🔎</div>
+      <h3>搜索美团外卖商家</h3>
+      <p>
+        输入中国城市名称，一键搜索该城市所有美团外卖商家<br>
+        并自动按<b>「明厨亮灶」</b>标签进行分类统计
+      </p>
+      <p style="margin-top:12px;color:#aaa;font-size:12px;">
+        💡 「明厨亮灶」是指餐饮商家将厨房实时视频公开<br>
+        让顾客可以看到食品制作全过程，是食品安全的重要标识
+      </p>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <p>数据来源：美团外卖 waimai.meituan.com（公开网页数据）</p>
+    <p>本工具仅用于食品安全信息查询与研究</p>
+  </div>
+
+  <script>
+    // ---- State ----
+    let currentData = null;
+    let activeTab = 'all'; // 'all' | 'mingchu' | 'nomingchu'
+
+    // ---- Event Listeners ----
+    document.getElementById('cityInput').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') doSearch();
+    });
+
+    // ---- Functions ----
+    function quickSearch(city) {
+      document.getElementById('cityInput').value = city;
+      doSearch();
+    }
+
+    async function doSearch() {
+      const city = document.getElementById('cityInput').value.trim();
+      if (!city) {
+        shakeInput();
+        return;
+      }
+
+      const btn = document.getElementById('searchBtn');
+      const main = document.getElementById('mainContent');
+
+      // Show loading
+      btn.disabled = true;
+      btn.textContent = '搜索中...';
+      main.innerHTML = `
+        <div class="loading-spinner">
+          <div class="spinner"></div>
+          <div class="loading-text">正在搜索「${escapeHtml(city)}」的美团外卖商家...</div>
+          <div style="font-size:12px;color:#aaa;">数据获取可能需要 10-30 秒，请耐心等待</div>
+        </div>
+      `;
+
+      try {
+        const resp = await fetch('/api/search', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ city }),
+        });
+
+        if (!resp.ok) {
+          const err = await resp.json().catch(() => ({ error: '网络请求失败' }));
+          throw new Error(err.error || `HTTP ${resp.status}`);
+        }
+
+        const data = await resp.json();
+
+        // Handle empty results
+        if (data.total === 0) {
+          currentData = null;
+          main.innerHTML = `
+            <div class="empty-state">
+              <div class="empty-icon">😔</div>
+              <h3>未找到商家数据</h3>
+              <p>在「${escapeHtml(city)}」未搜索到外卖商家</p>
+              <p style="font-size:12px;color:#aaa;margin-top:8px;">
+                可能原因：<br>
+                1. 美团外卖在该城市暂不可用<br>
+                2. 网页加载时遇到验证，请稍后重试<br>
+                3. 城市名称拼写有误
+              </p>
+            </div>
+          `;
+          btn.disabled = false;
+          btn.textContent = '🔍 搜索';
+          return;
+        }
+
+        currentData = data;
+        activeTab = 'all';
+        renderResults();
+
+      } catch (err) {
+        main.innerHTML = `
+          <div class="error-state">
+            <div class="error-icon">⚠️</div>
+            <h3>搜索出错</h3>
+            <p>${escapeHtml(err.message)}</p>
+            <p style="font-size:12px;margin-top:8px;">
+              请检查网络连接，或稍后重试<br>
+              如遇到验证码，需在浏览器中手动打开美团外卖完成验证
+            </p>
+          </div>
+        `;
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '🔍 搜索';
+      }
+    }
+
+    function renderResults() {
+      if (!currentData) return;
+
+      const data = currentData;
+      const main = document.getElementById('mainContent');
+      const stats = data.stats;
+
+      let list;
+      if (activeTab === 'mingchu') {
+        list = data.hasMingchu;
+      } else if (activeTab === 'nomingchu') {
+        list = data.noMingchu;
+      } else {
+        list = [...data.hasMingchu, ...data.noMingchu];
+      }
+
+      main.innerHTML = `
+        <!-- Stats -->
+        <div class="stats-row">
+          <div class="stat-card">
+            <div class="stat-number">${stats.total}</div>
+            <div class="stat-label">🏪 商家总数</div>
+          </div>
+          <div class="stat-card mingchu">
+            <div class="stat-number">${stats.mingchuCount}</div>
+            <div class="stat-label">🟢 明厨亮灶</div>
+          </div>
+          <div class="stat-card warning">
+            <div class="stat-number">${stats.noMingchuCount}</div>
+            <div class="stat-label">⚪ 无明厨亮灶</div>
+          </div>
+        </div>
+
+        <!-- Info Banner -->
+        ${stats.mingchuRatio > 0 ? `
+          <div class="info-banner">
+            <span class="info-icon">📊</span>
+            <span>
+              <strong>${escapeHtml(data.city)}</strong> 共有 <strong>${stats.total}</strong> 个外卖商家，
+              其中 <strong style="color:#00B578;">${stats.mingchuCount} 个</strong>（${stats.mingchuRatio}%）具有「明厨亮灶」标签。
+              明厨亮灶意味着商家厨房实时视频公开，食品安全更有保障。
+            </span>
+          </div>
+        ` : `
+          <div class="info-banner">
+            <span class="info-icon">📊</span>
+            <span>
+              <strong>${escapeHtml(data.city)}</strong> 共找到 <strong>${stats.total}</strong> 个外卖商家。
+              暂未发现「明厨亮灶」标签的商家。
+            </span>
+          </div>
+        `}
+
+        <!-- Tabs -->
+        <div class="tabs">
+          <div class="tab ${activeTab === 'all' ? 'active' : ''}" onclick="switchTab('all')">
+            全部 <span class="tab-count">${stats.total}</span>
+          </div>
+          <div class="tab ${activeTab === 'mingchu' ? 'active' : ''}" onclick="switchTab('mingchu')">
+            🟢 明厨亮灶 <span class="tab-count">${stats.mingchuCount}</span>
+          </div>
+          <div class="tab ${activeTab === 'nomingchu' ? 'active' : ''}" onclick="switchTab('nomingchu')">
+            ⚪ 无明厨亮灶 <span class="tab-count">${stats.noMingchuCount}</span>
+          </div>
+        </div>
+
+        <!-- Search meta -->
+        <div class="search-meta">
+          搜索时间：${new Date(stats.searchTime).toLocaleString('zh-CN')}
+          ${stats.dataSources ? ` · DOM: ${stats.dataSources.fromDOM} · API: ${stats.dataSources.fromAPI}` : ''}
+          ${stats.isDemoData ? `
+            <span style="display:block;margin-top:4px;color:#FF6B35;">
+              ⚠️ 当前为<b>演示数据</b>。美团外卖网页版有反爬保护，建议使用美团官方开放平台API获取真实数据。
+            </span>
+          ` : ''}
+        </div>
+
+        <!-- Restaurant List -->
+        <div class="restaurant-list">
+          ${list.map((r, i) => renderCard(r, r.hasMingchu !== undefined ? r.hasMingchu : activeTab === 'mingchu', i)).join('')}
+        </div>
+
+        ${list.length === 0 ? `
+          <div class="empty-state">
+            <div class="empty-icon">📭</div>
+            <h3>该分类下无商家</h3>
+          </div>
+        ` : ''}
+      `;
+    }
+
+    function renderCard(r, isMingchu, index) {
+      // Rating stars
+      const rating = r.rating || 0;
+      const stars = rating >= 4.5 ? '⭐⭐⭐⭐⭐' :
+                    rating >= 4.0 ? '⭐⭐⭐⭐' :
+                    rating >= 3.5 ? '⭐⭐⭐½' :
+                    rating >= 3.0 ? '⭐⭐⭐' :
+                    rating > 0 ? '⭐⭐' : '';
+
+      const metaItems = [];
+      if (rating > 0) metaItems.push(`<span class="meta-item"><span class="rating-stars">${stars}</span> ${rating.toFixed(1)}分</span>`);
+      if (r.monthlySales) metaItems.push(`<span class="meta-item">📦 月售${r.monthlySales >= 1000 ? (r.monthlySales/1000).toFixed(0)+'k' : r.monthlySales}</span>`);
+      if (r.deliveryTime) metaItems.push(`<span class="meta-item">🛵 ${r.deliveryTime}分钟</span>`);
+      if (r.deliveryFee != null) metaItems.push(`<span class="meta-item">💰 配送¥${r.deliveryFee}</span>`);
+
+      const tagHtml = (r.tags || []).length > 0
+        ? `<div class="restaurant-tags">${r.tags.slice(0, 6).map(t => `<span class="restaurant-tag">${escapeHtml(t)}</span>`).join('')}</div>`
+        : '';
+
+      return `
+        <div class="restaurant-card">
+          <div class="restaurant-avatar ${isMingchu ? 'mingchu-avatar' : ''}">
+            ${isMingchu ? '👨‍🍳' : '🍽️'}
+          </div>
+          <div class="restaurant-info">
+            <div class="restaurant-name">
+              ${escapeHtml(r.name || '未知商家')}
+              ${isMingchu
+                ? '<span class="mingchu-badge">👨‍🍳 明厨亮灶</span>'
+                : '<span class="no-mingchu-tag">无标签</span>'}
+            </div>
+            <div class="restaurant-meta">${metaItems.join('')}</div>
+            ${tagHtml}
+          </div>
+        </div>
+      `;
+    }
+
+    function switchTab(tab) {
+      activeTab = tab;
+      renderResults();
+    }
+
+    function shakeInput() {
+      const input = document.getElementById('cityInput');
+      input.style.animation = 'none';
+      input.offsetHeight; // reflow
+      input.style.animation = 'shake 0.4s ease';
+      input.focus();
+    }
+
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    // Inject shake keyframes
+    const shakeStyle = document.createElement('style');
+    shakeStyle.textContent = `
+      @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-8px); }
+        75% { transform: translateX(8px); }
+      }
+    `;
+    document.head.appendChild(shakeStyle);
+  </script>
+</body>
+</html>
